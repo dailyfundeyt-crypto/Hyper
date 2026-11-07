@@ -1,0 +1,14 @@
+{
+  "name": "muse-pc-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Streamable-HTTP MCP bridge for Cua Driver (stdio) on Stefan's Windows PC",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "status": "node -e \"fetch('http://127.0.0.1:3420/health').then(r=>r.json()).then(console.log).catch(e=>{console.error('offline',e.message);process.exit(1)})\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

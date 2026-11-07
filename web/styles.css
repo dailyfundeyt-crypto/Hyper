@@ -1,0 +1,96 @@
+:root {
+  color-scheme: light;
+  --ink: #1c1915;
+  --paper: #f3efe4;
+  --line: #d9d1c3;
+  --long: #2f7d4a;
+  --short: #a33b32;
+  --neutral: #8a8478;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 18px/1.45 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+main {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+.banner {
+  margin: 0 0 1.25rem;
+  padding: 0.7rem 0.85rem;
+  background: #6e2c28;
+  color: #fff8f2;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+h1 { margin: 0; font-size: 2.2rem; font-weight: 600; }
+h2 { margin: 1.5rem 0 0.4rem; font-size: 1.15rem; }
+.lede { margin-top: 0.35rem; }
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: end;
+  margin: 1rem 0;
+}
+
+label { flex-basis: 100%; font-size: 0.85rem; }
+
+input, button {
+  font: inherit;
+  color: var(--ink);
+  background: white;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 0.35rem 0.6rem;
+}
+
+button { cursor: pointer; background: #efe6d4; }
+
+#tilt, #heartbeat, #script { margin: 0.35rem 0; }
+
+ol { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+
+li {
+  display: grid;
+  grid-template-columns: 8.5rem 1.4rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.name { font-family: "Avenir Next", "Segoe UI", sans-serif; font-size: 0.95rem; }
+
+.dot {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.2rem;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: transparent;
+}
+
+.dot.long { background: var(--long); }
+.dot.short { background: var(--short); }
+.dot.neutral { background: var(--neutral); }
+.dot.empty, .dot.contradiction { background: transparent; }
+
+.reason { margin: 0; }
+.source { display: block; margin-top: 0.15rem; color: #5c564c; font-size: 0.85rem; }
+
+@media (max-width: 36rem) {
+  li { grid-template-columns: 1.4rem 1fr; }
+  .name { grid-column: 1 / -1; }
+}

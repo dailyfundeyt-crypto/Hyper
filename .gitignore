@@ -1,0 +1,26 @@
+# Real environment files. Examples are kept.
+.env
+.env.*
+!.env.example
+!**/.env.example
+!**/.env.local.example
+
+# Secrets that must never land in git, including inside vendor copies.
+**/.pc-key
+**/.owner-key
+**/.flag-url
+**/.key
+**/.agent-key
+**/.agent-key-*
+*.pem
+*.p12
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+.DS_Store
+.vercel
