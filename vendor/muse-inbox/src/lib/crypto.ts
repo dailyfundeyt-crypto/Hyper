@@ -1,0 +1,13 @@
+import { createHash, randomBytes } from "crypto";
+
+export function sha256Hex(input: string): string {
+  return createHash("sha256").update(input, "utf8").digest("hex");
+}
+
+export function randomToken(bytes = 32): string {
+  return randomBytes(bytes).toString("base64url");
+}
+
+export function pairingToken(): string {
+  return randomBytes(18).toString("base64url");
+}

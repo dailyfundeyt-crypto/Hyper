@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hyper — paper confluence</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main>
+    <p class="banner">Paper trading only. No order is sent from this page.</p>
+    <h1>Hyper</h1>
+    <p class="lede">Confluence for one symbol. A hollow circle has no reading.</p>
+    <form id="ask">
+      <label for="symbol">Symbol</label>
+      <input id="symbol" name="symbol" value="BTC/USDT" autocomplete="off" />
+      <button type="submit">Load BTC bias</button>
+      <button type="button" id="speak">Speak</button>
+    </form>
+    <p id="tilt">Tilt: no data</p>
+    <p id="heartbeat">Last heartbeat: no data. Time zone Europe/Berlin.</p>
+    <ol id="branches"></ol>
+    <h2>Spoken script</h2>
+    <p id="script">No script yet.</p>
+  </main>
+  <script src="/spoken.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

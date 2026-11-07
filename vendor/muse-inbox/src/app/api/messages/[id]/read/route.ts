@@ -1,0 +1,23 @@
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/auth";
+import { httpStatusFor, markRead } from "@/lib/messages";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/** Owner UI: mark a PUBLISHED result as read (locks it). Drafts are not affected. */
+export async function POST(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+  const { id } = await ctx.params;
+  try {
+    const message = await markRead(id);
+    return Response.json({ message });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "error";
+    return Response.json({ error: msg }, { status: httpStatusFor(msg) });
+  }
+}

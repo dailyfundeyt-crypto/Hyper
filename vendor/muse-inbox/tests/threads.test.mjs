@@ -1,0 +1,40 @@
+// Task threads + calendar dedupe. Creates test tasks and completes them at the end.
+const BASE = process.env.BASE, KEY = process.env.MUSE_KEY, OWNER = process.env.OWNER_KEY;
+const h = { "content-type": "application/json", accept: "application/json, text/event-stream", authorization: `Bearer ${KEY}`, "mcp-protocol-version": "2025-06-18" };
+async function call(name, args = {}) {
+  const r = await fetch(`${BASE}/api/mcp`, { method: "POST", headers: h, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }) });
+  const t = await r.text(); const line = t.includes("data:") ? t.split("\n").filter((l) => l.startsWith("data:")).pop().slice(5) : t;
+  const m = JSON.parse(line); const text = (m.result?.content ?? []).map((c) => c.text).join("\n") || m.error?.message;
+  return { text, isError: !!m.result?.isError || !!m.error };
+}
+let ok = 0, bad = 0; const c = (l, x, i) => { x ? ok++ : bad++; console.log(`${x ? "PASS" : "FAIL"} ${l}${x ? "" : " :: " + String(i).slice(0, 300)}`); };
+const tl = await fetch(`${BASE}/api/mcp`, { method: "POST", headers: h, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }) }).then((r) => r.text());
+c("tools/list has post_update/ask_owner/get_owner_replies/add_task_from_calendar", ["post_update", "ask_owner", "get_owner_replies", "add_task_from_calendar"].every((n) => tl.includes(`"${n}"`)), "");
+const mid = (await (await fetch(`${BASE}/api/messages`, { method: "POST", headers: h, body: JSON.stringify({ text: "[Automatischer Test] Thread-Aufgabe – bitte ignorieren" }) })).json()).message.id;
+let r = await call("post_update", { message_id: mid, text: "Zwischenstand (Test)" });
+c("post_update ok", !r.isError, r.text);
+r = await call("ask_owner", { message_id: mid, question: "Testfrage?" });
+c("ask_owner ok + waiting", !r.isError && JSON.parse(r.text).waiting_for_answer === true, r.text);
+r = await call("list_open_tasks"); let t = JSON.parse(r.text).days.flatMap((g) => g.tasks).find((x) => x.message_id === mid);
+c("waiting task stays open with waiting_for_answer", t && t.waiting_for_answer === true, r.text);
+r = await call("get_owner_replies", { message_id: mid });
+c("get_owner_replies: waiting, no replies yet", JSON.parse(r.text).waiting_for_answer === true && JSON.parse(r.text).replies.length === 0, r.text);
+let rr = await fetch(`${BASE}/api/tasks/${mid}/reply`, { method: "POST", headers: { "content-type": "application/json", "x-owner-key": KEY }, body: JSON.stringify({ text: "x" }) });
+c("Muse key cannot reply as owner (403)", rr.status === 403, rr.status);
+rr = await fetch(`${BASE}/api/tasks/${mid}/reply`, { method: "POST", headers: { "content-type": "application/json", "x-owner-key": OWNER }, body: JSON.stringify({ text: "Testantwort" }) });
+c("owner reply ok", rr.ok, rr.status);
+r = await call("get_owner_replies", { message_id: mid }); const g = JSON.parse(r.text);
+c("reply visible, not waiting anymore", g.waiting_for_answer === false && g.replies.some((x) => x.text === "Testantwort") && g.thread.length === 3, r.text);
+r = await call("list_open_tasks"); t = JSON.parse(r.text).days.flatMap((d) => d.tasks).find((x) => x.message_id === mid);
+c("task open again, not waiting (=> flag A)", t && t.waiting_for_answer === false, r.text);
+const nr = await fetch(`${BASE}/api/tasks/notes?message_id=${mid}`, { headers: h }).then((x) => x.json());
+c("/api/tasks/notes returns thread", nr.notes?.length === 3, JSON.stringify(nr));
+const ev = `test-event-${Date.now()}`;
+r = await call("add_task_from_calendar", { event_id: ev, title: "Dusty", due_at: new Date().toISOString(), prompt: "[Automatischer Test] Kalender-Aufgabe – bitte ignorieren" });
+const c1 = JSON.parse(r.text); c("calendar task created", c1.created === true && c1.message_id, r.text);
+r = await call("add_task_from_calendar", { event_id: ev, title: "Dusty", prompt: "dup" });
+const c2 = JSON.parse(r.text); c("calendar dedupe by event_id", c2.created === false && c2.message_id === c1.message_id, r.text);
+for (const id of [mid, c1.message_id]) await call("complete_task", { message_id: id, result_note: "Automatischer Test – erledigt." });
+r = await call("list_open_tasks");
+c("test tasks completed", !JSON.parse(r.text).days.flatMap((d) => d.tasks).some((x) => [mid, c1.message_id].includes(x.message_id)), r.text);
+console.log(`${ok} passed, ${bad} failed`); process.exit(bad ? 1 : 0);

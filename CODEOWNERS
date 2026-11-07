@@ -1,0 +1,16 @@
+# Person 1 — branch a/platform — owns the MCP server and the market adapter.
+# Person 2 — branch b/signal — owns indicators, the brain, identities, and the page.
+# Do not edit the other person's paths. Merge to main every 60 to 90 minutes.
+#
+# @dailyfundeyt-crypto is the GitHub login on this repository today.
+# When person 2 joins, replace the owners on the person 2 paths with their login.
+
+# Person 1
+/server/ @dailyfundeyt-crypto
+/adapters/market/ @dailyfundeyt-crypto
+
+# Person 2
+/adapters/indicators/ @dailyfundeyt-crypto
+/brain/ @dailyfundeyt-crypto
+/identities/ @dailyfundeyt-crypto
+/web/ @dailyfundeyt-crypto

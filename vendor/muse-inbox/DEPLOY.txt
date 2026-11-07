@@ -1,0 +1,62 @@
+muse-inbox-v3 preview
+Last deploy (Europe/Berlin): 2026-10-27 17:59 CET
+Deployment: dpl_Cqq513RQra9WHrJM9RWVpLHKzhcb
+Alias: https://prototyping-muse.vercel.app (NEVER --prod)
+MCP: https://prototyping-muse.vercel.app/api/mcp
+
+Supported protocolVersions: 2026-07-28, 2025-06-18, 2025-03-26, 2024-11-05
+Modern (2026-07-28): server/discover, stateless, resultType, Mcp-Method/Mcp-Name,
+  _meta protocolVersion/serverInfo, CacheableResult ttlMs/cacheScope, -32022/-32020
+Legacy: initialize / notifications/initialized / ping / Mcp-Session-Id
+
+Inspector verified: default modern, --protocol-era modern|auto|legacy all OK
+
+# OpenAI-compatible Muse API (2026-10-27)
+# Preview project: muse-inbox-v3
+# Alias: https://prototyping-muse.vercel.app  (NEVER --prod)
+# Team: team_NqihjtubGmFXPLA9P7CDqHAA (stefans-projects-e40bb777)
+# Deploy via Vercel MCP: upload_file (SHA1 digests) + create_deployment (omit target=preview)
+# New routes: /v1/models, /v1/chat/completions, /v1/messages/[id], /v1/files, /v1/uploads
+# Migration: supabase/migrations/20261027120000_muse_attachments_and_api_source.sql
+# Guide: /workspace/muse-doc/muse-api-anleitung.md
+# Do NOT edit src/app/api/mcp or src/lib/auth.ts (concurrent workers)
+# Heartbeat flag (2026-10-27): GET /api/flag -> A|B; MCP tool has_new; RPC muse_has_new
+
+== 2026-10-28 (Preview, kein --prod) ==
+Deployment: dpl_BFMrp5WXRAGzyjRD3ij3KWYTFbLr  (muse-inbox-v3-3hajisz5z-stefans-projects-e40bb777.vercel.app)
+Alias: prototyping-muse.vercel.app -> dpl_BFMrp5WXRAGzyjRD3ij3KWYTFbLr (vorher dpl_FZZxb7X7BppxTfPAiXcb19jVfbUb)
+Neu: Entwürfe/Retract/Edit/Publish/Read, STOPP + /api/control, Approvals + /approve (Owner-Key .owner-key),
+     Grants, Budget-Ledger, Zapier-Proxy (/api/mcp, zapier_*; aktiv nur wenn ZAPIER_MCP_URL [+ ZAPIER_MCP_TOKEN] gesetzt), muse_tool_log.
+Migrationen: 20261028110000, 113000, 114500, 115000, 120000 (alle additiv).
+OFFEN: ZAPIER_MCP_URL / ZAPIER_MCP_TOKEN als Vercel-Env (Preview) setzen und neu deployen, z. B.:
+  printf %s "$ZAPIER_MCP_URL"   | vercel env add ZAPIER_MCP_URL preview --sensitive
+  printf %s "$ZAPIER_MCP_TOKEN" | vercel env add ZAPIER_MCP_TOKEN preview --sensitive
+
+== 2026-10-28 #2 (Preview via Vercel-MCP, kein --prod/promote) ==
+Deployment: dpl_B6jaixC7mok76sRusUP43q9MKCWT  (muse-inbox-v3-fs6dez65y-stefans-projects-e40bb777.vercel.app)
+Alias: prototyping-muse.vercel.app -> dpl_B6jaixC7mok76sRusUP43q9MKCWT (vorher dpl_8YykRze1vUXUoQPFuqYKbNXFqrHn)
+Neu: Inbox-Auftrag-Freigaben (message_id+approval_id, single-use; Ja/Nein-Karten), Tagesliste (list_open_tasks/complete_task, Tab "Heute"),
+     Gespräch pro Aufgabe (post_update/ask_owner/get_owner_replies, Antwortbox, Badge "wartet auf Antwort"),
+     Kalender (add_task_from_calendar, Dedupe per event_id), öffentliche Flagge GET /api/flag/<token> (+ POST /api/flag/rotate, Owner-Key).
+Routen: /api/flag/[token], /api/flag/rotate, /api/tasks, /api/tasks/notes, /api/tasks/[id]/reply
+Migrationen: 20261028130000_muse_inbox_order_approvals, 20261028131000_muse_public_flag_token, 20261028133000_muse_task_threads (alle additiv)
+Flag-URL: .flag-url (chmod 600, nicht ausgeben)
+
+2026-10-28 #3 (Links, Projekt-Dokumente, Kalender-Aktivierung, Deadline-Zusammenfassung)
+  Deployment: dpl_BT7H89PamsjQX36FdVMqShdpjghY (muse-inbox-v3-3d8a5xyar-stefans-projects-e40bb777.vercel.app), preview, no prod/promote
+  Alias prototyping-muse.vercel.app moved from dpl_B6jaixC7mok76sRusUP43q9MKCWT
+  Migration (additive): 20261028140000_muse_projects (muse_projects, muse_project_activations, inbox cols project_id/activation_id/project_task_index, RPCs muse_activate_project, muse_projects_ensure_today, muse_project_summary, muse_projects_list, muse_project_get, muse_owner_project_save)
+  Routes: GET/POST /api/projects, GET /api/projects/[id], GET /api/projects/summaries; pages /projekte, /projekte/[id]
+  MCP tools: get_task, list_projects, get_project, activate_project_from_calendar, post_project_summary (+ attachments/projects_today in list_open_tasks)
+  Tests remote: projects 34/34, tasks 6/6, threads 13/13, dusty-fallback 3/3, approval-flow 19/19 (remote dry-run)
+  Manifest: /tmp/muse-sha-files5.json (71 files)
+
+== 2026-10-29 (nur Daten, kein Deploy) ==
+Muse Arbeitsbereich neu in Drive dailyfunde.yt@gmail.com (via Zapier-Proxy):
+  Muse Arbeitsbereich 1A1aPaV5D6mK1S_VuYIf9GsqEdPHXR00Q (Meine Ablage)
+  Freies Arbeiten (alle MCP-Tools) 12UPfGo8rJG6qzOD7jCMgJnG3tkmsSKFA
+  Ergebnisse 1uAtWrRARQYutBXc-NwfiW2z7m0aw0Lk8
+Grant neu 8c60dfdb-7f84-4a6d-8dbb-2543de630807 (google_drive.write, exp 2026-11-04); alt e36d4493 (skunc3021-Ordner) widerrufen; Temp-Grant 92186823 widerrufen.
+Code enthält keine dieser IDs -> kein Redeploy nötig.
+
+2026-10-29 (später): Dusty Agent → Agenten verschoben (durch Stefan). 'Freies Arbeiten' → 'Arbeiten' (ID gleich). Neu: Memory 1fpx_…, Abläufe 1WD4…, Skills 10bQ… mit README-Docs. Grant 085476a9 ersetzt 8c60dfdb (widerrufen). Nur Daten, kein Redeploy nötig.
